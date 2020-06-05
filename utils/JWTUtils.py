@@ -1,7 +1,11 @@
 import time
+
+from Crypto.Cipher import AES
 import jwt
 from app import Config
-
+from binascii import b2a_hex, a2b_hex, hexlify
+from app.database.Redis import redis_cli as r
+import hashlib
 """payload 中一些固定参数名称的意义, 同时可以在payload中自定义参数"""
 # iss  【issuer】发布者的url地址
 # sub 【subject】该JWT所面向的用户，用于处理特定应用，不是常用的字段
@@ -63,12 +67,38 @@ class JWTBuilder:
 
 def vertify(token: str, user: str):
     try:
+        token = decrypt(token)
         data = jwt.decode(token, key=Config.JWT_KEY, algorithms='HS256')
+        return True
     except Exception as e:
         print(e)
-    if data['user'] == user:
-        return True
-    else:
         return False
 
+def get_data(data):
+    return jwt.decode(decrypt(data),key=Config.JWT_KEY,algorithms='HS256')
 
+def add_to_16(text):
+    if len(text.encode('utf-8')) % 16:
+        add = 16 - (len(text.encode('utf-8')) % 16)
+    else:
+        add = 0
+    text = text + ('\0' * add)
+    return text.encode('utf-8')
+
+def encrypt(text):
+    key = add_to_16(Config.JWT_KEY)
+    mode  = AES.MODE_CBC
+    iv = add_to_16(Config.AES_IV)
+    text = add_to_16(text)
+    cryptos = AES.new(key,mode,iv)
+    cipher_text = cryptos.encrypt(text)
+    return b2a_hex(cipher_text).decode()
+
+def decrypt(text):
+    key = add_to_16(Config.JWT_KEY)
+    mode = AES.MODE_CBC
+    iv = add_to_16(Config.AES_IV)
+    text = add_to_16(text)
+    cryptos = AES.new(key,mode,iv)
+    raw_text = cryptos.decrypt(a2b_hex(text))
+    return bytes.decode(raw_text).rstrip('\0')

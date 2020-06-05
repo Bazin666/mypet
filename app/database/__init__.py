@@ -1,2 +1,2 @@
-import app.database.model
-db = model.db
+from .model import db
+from .Redis import redis_cli

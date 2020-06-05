@@ -5,13 +5,15 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
+    wx_openid = db.Column(db.String(50), nullable=True)
     email = db.Column(db.String(50), nullable=False)
     question = db.relationship('Question', backref=db.backref('user'))
 
-    def __init__(self, name, password, email):
+    def __init__(self, name, password, email,openid):
         self.username = name
         self.email = email
         self.password = password
+        self.wx_openid = openid
 
     def __reduce__(self):
         return '<User %r>' % self.name
