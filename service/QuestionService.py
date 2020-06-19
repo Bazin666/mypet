@@ -8,3 +8,7 @@ def add_question(title,context,user):
     user.question.append(q)
     db.session.add(q)
     db.session.commit()
+
+def list(page_index=0,page_size=0):
+    questions = Question.query.all()
+    return questions
