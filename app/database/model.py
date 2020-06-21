@@ -10,6 +10,7 @@ class User(db.Model):
     wx_openid = db.Column(db.String(50), nullable=True)
     email = db.Column(db.String(50), nullable=False)
     question = db.relationship('Question', backref=db.backref('user'))
+    commnet = db.relationship('Commnet', backref=db.backref('user'))
     create_datetime = db.Column(db.DateTime,default=datetime.now())
     update_datetime = db.Column(db.DateTime,default=datetime.now)
     def __init__(self, name, password, email,openid):
@@ -28,8 +29,22 @@ class Question(db.Model):
     question_title = db.Column(db.String(50), nullable=False)
     question_context = db.Column(db.String(500), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('m_user.id'))
+    commnet = db.relationship('Commnet', backref=db.backref('question'))
     create_datetime = db.Column(db.DateTime,default=datetime.now())
     update_datetime = db.Column(db.DateTime,default=datetime.now)
+    def __init__(self, question_title, question_context):
+        self.question_title = question_title
+        self.question_context = question_context
+
+class Commnet(db.Model):
+    __tablename__ = 'm_commnet'
+    id = db.Column(db.Integer, primary_key=True)
+    commnet_context = db.Column(db.String(500), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('m_user.id'))
+    question_id = db.Column(db.Integer, db.ForeignKey('m_question.id'))
+    create_datetime = db.Column(db.DateTime, default=datetime.now())
+    update_datetime = db.Column(db.DateTime, default=datetime.now)
+
     def __init__(self, question_title, question_context):
         self.question_title = question_title
         self.question_context = question_context

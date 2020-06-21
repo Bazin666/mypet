@@ -6,7 +6,7 @@ import hashlib
 
 def regist_user(username, password, email='', wx_openid=''):
     try:
-        user = get_user(username=username)
+        user = get_user(username=username) or None
         if user is None:
             user = User(username, password, email, wx_openid)
             db.session.add(user)
