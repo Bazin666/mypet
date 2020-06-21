@@ -27,7 +27,7 @@ def login_user(username: str, password: str):
         return None
 
 
-def get_user(username: str, passowrd: str = None, openid: str = None):
+def get_user(username: str=None, passowrd: str = None, openid: str = None,userId =None):
     wrapper = {}
     if username:
         wrapper.update({'username': username})
@@ -35,6 +35,8 @@ def get_user(username: str, passowrd: str = None, openid: str = None):
         wrapper.update({'password': passowrd})
     if openid:
         wrapper.update({'wx_openid': openid})
+    if userId:
+        wrapper.update({'id':userId})
     # user = User.query.filter_by(username = username,password = passowrd,wx_openid = openid).first()
     user = User.query.filter_by(**wrapper).first()
     return user

@@ -15,7 +15,8 @@ def create_app():
 
 
 def regist_controller(app:Flask):
-    from controller import index,question
+    from controller import index,question,comment
     app.register_blueprint(index)
     # app.register_blueprint(question,url_prefix='question')
     app.register_blueprint(question)
+    app.register_blueprint(comment)

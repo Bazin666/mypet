@@ -31,7 +31,11 @@ def all():
     q_list = QuestionService.list()
     res = []
     for q in q_list:
-        res.append({"title": q.question_title, "context": q.question_context, 'id': q.id})
+        comment = []
+        for c in q.comment:
+            comment.append(c.comment_context)
+        res.append({"title": q.question_title, "context": q.question_context, 'id': q.id,'comments':comment})
+
     r = jsonify(res)
     return r
 
@@ -51,7 +55,13 @@ def all_by_one():
 def get_one():
     qid = request.args.get('qid','')
     question = QuestionService.getOne(qid)
-    r = {'qid': question.id,'title':question.question_title,'context':question.question_context}
+    comments = []
+    for c in question.comment:
+        comments.append(c.comment_context)
+
+
+
+    r = {'qid': question.id,'title':question.question_title,'context':question.question_context,'comments':comments}
     if r:
         r = jsonify(r)
         return r
